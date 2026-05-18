@@ -7,9 +7,7 @@ namespace dungeon::grid {
     int y;
   };
 
-  constexpr bool operator==(TileCoord a, TileCoord b) {
-    return a.x == b.x && a.y == b.y;
-  }
+  constexpr bool operator==(TileCoord a, TileCoord b) { return a.x == b.x && a.y == b.y; }
 
   int Manhattan(TileCoord a, TileCoord b);
 
