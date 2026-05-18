@@ -25,8 +25,13 @@ target_compile_options(project_warnings INTERFACE
   $<$<CXX_COMPILER_ID:MSVC>:/W4;/permissive-;/WX>
 )
 
+enable_testing()
+
+add_subdirectory(src/dungeon)
+add_subdirectory(tests)
+
 add_executable(dungeon-crawler src/main.cpp)
-target_link_libraries(dungeon-crawler PRIVATE raylib project_warnings)
+target_link_libraries(dungeon-crawler PRIVATE dungeon_core project_warnings)
 
 # Hide the console window on Windows Release builds; keep it in Debug so
 # stdout/stderr stay visible while iterating.

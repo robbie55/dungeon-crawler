@@ -24,11 +24,11 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Cache raylib build
+      - name: Cache deps build
         uses: actions/cache@v5
         with:
           path: build/${{ matrix.preset }}/_deps
-          key: ${{ runner.os }}-raylib-${{ matrix.preset }}-${{ hashFiles('CMakeLists.txt') }}
+          key: ${{ runner.os }}-deps-${{ matrix.preset }}-${{ hashFiles('CMakeLists.txt', 'tests/CMakeLists.txt') }}
 
       - name: Configure
         run: cmake --preset ${{ matrix.preset }}
@@ -36,14 +36,12 @@ jobs:
       - name: Build
         run: cmake --build build/${{ matrix.preset }}
 
+      - name: Run Tests
+        run: ctest --preset ${{ matrix.preset }}
 
       # - name: Smoketest (run binary)
       #
-      #   run: ./build/${{ matrix.preset }}/debugger
-
-      # - name: Run Tests
-      #
-      #   run: ctest --preset ${{ matrix.preset }}
+      #   run: ./build/${{ matrix.preset }}/dungeon-crawler
 
 
   lint:
