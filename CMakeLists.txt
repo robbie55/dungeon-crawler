@@ -34,4 +34,9 @@ if(WIN32)
   set_target_properties(dungeon-crawler PROPERTIES
     WIN32_EXECUTABLE $<CONFIG:Release>
   )
+  # /SUBSYSTEM:WINDOWS defaults to expecting WinMain; keep the standard
+  # int main() entry point by forcing the CRT's main-style startup.
+  target_link_options(dungeon-crawler PRIVATE
+    $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/ENTRY:mainCRTStartup>
+  )
 endif()
