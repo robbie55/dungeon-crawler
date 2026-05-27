@@ -39,10 +39,6 @@ jobs:
       - name: Run Tests
         run: ctest --preset ${{ matrix.preset }}
 
-      # - name: Smoketest (run binary)
-      #
-      #   run: ./build/${{ matrix.preset }}/dungeon-crawler
-
 
   lint:
     name: Linter (Ubuntu v.24.04)
