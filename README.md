@@ -81,7 +81,7 @@ git lfs pull          # download the real blobs for the current checkout
 
 LFS replaces large binaries in git history with tiny text pointers; the real bytes live on a separate LFS store and are fetched on checkout. We use it for art and audio source files so the repo stays cheap to clone.
 
-> Status: `.gitattributes` doesn't exist in the repo yet — LFS will be wired up the first time binary assets land. Until then, running `git lfs install` once is all you need to do. The day-to-day commands below apply once tracking is in place.
+`.gitattributes` tracks `*.ase`, `*.aseprite`, `*.wav`, `*.ogg`, `*.mp3`, and `*.png` as LFS. As long as you ran `git lfs install` once on your machine (step 1 above), clones and checkouts will fetch the real binaries automatically.
 
 **Day-to-day commands:**
 

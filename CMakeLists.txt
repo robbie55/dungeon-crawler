@@ -19,6 +19,15 @@ FetchContent_Declare(
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(raylib)
 
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.12.0
+  GIT_SHALLOW TRUE
+)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+FetchContent_MakeAvailable(nlohmann_json)
+
 add_library(project_warnings INTERFACE)
 target_compile_options(project_warnings INTERFACE
   $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall;-Wextra;-Wpedantic;-Wshadow;-Werror>
@@ -27,11 +36,10 @@ target_compile_options(project_warnings INTERFACE
 
 enable_testing()
 
-add_subdirectory(src/dungeon)
 add_subdirectory(tests)
 
 add_executable(dungeon-crawler src/main.cpp)
-target_link_libraries(dungeon-crawler PRIVATE dungeon_core project_warnings)
+target_link_libraries(dungeon-crawler PRIVATE raylib nlohmann_json::nlohmann_json project_warnings)
 
 # Hide the console window on Windows Release builds; keep it in Debug so
 # stdout/stderr stay visible while iterating.

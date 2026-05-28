@@ -1,8 +1,8 @@
 #include <doctest/doctest.h>
 
-#include "dungeon/grid/tile_coord.h"
+#include "tile_coord.h"
 
-namespace dungeon::grid {
+namespace dummy {
 
   TEST_CASE("TileCoord equality") {
     CHECK(TileCoord{0, 0} == TileCoord{0, 0});
@@ -17,4 +17,4 @@ namespace dungeon::grid {
     CHECK(Manhattan({5, 5}, {5, 5}) == 0);
   }
 
-}  // namespace dungeon::grid
+}  // namespace dummy

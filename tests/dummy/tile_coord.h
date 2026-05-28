@@ -1,6 +1,6 @@
 #pragma once
 
-namespace dungeon::grid {
+namespace dummy {
 
   struct TileCoord {
     int x;
@@ -11,4 +11,4 @@ namespace dungeon::grid {
 
   int Manhattan(TileCoord a, TileCoord b);
 
-}  // namespace dungeon::grid
+}  // namespace dummy

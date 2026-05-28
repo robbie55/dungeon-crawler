@@ -249,6 +249,41 @@ Strict, opinionated, educational. The philosophy: a learning project benefits mo
 
 Functions that bust these limits split. No exceptions without discussion.
 
+### Raylib `Begin*` / `End*` blocks
+
+Raylib has paired calls — `BeginDrawing()` / `EndDrawing()`, `BeginTextureMode()` / `EndTextureMode()`, `BeginMode2D()` / `EndMode2D()`, etc. — that establish a render state for the calls between them. Syntactically they're plain function calls, but semantically they're scopes.
+
+**Wrap the body in an anonymous brace block.** The braces document the scope, clang-format auto-indents the body, and any locals declared inside die at the closing brace.
+
+```cpp
+BeginDrawing();
+{
+  ClearBackground(RAYWHITE);
+  DrawTexturePro(target.texture, source_rec, dest_rec, {0, 0}, 0.0F, WHITE);
+}
+EndDrawing();
+```
+
+Nested pairs nest naturally:
+
+```cpp
+BeginTextureMode(target);
+{
+  ClearBackground(BLANK);
+  // ... draw the game into the virtual 384x216 target ...
+}
+EndTextureMode();
+
+BeginDrawing();
+{
+  ClearBackground(BLACK);
+  DrawTexturePro(target.texture, source_rec, dest_rec, {0, 0}, 0.0F, WHITE);
+}
+EndDrawing();
+```
+
+This is a project convention, not a raylib convention — official raylib examples are flat. We adopt it because it makes nested render passes (texture → screen, camera transforms, scissor regions) much easier to scan. clang-format enforces the indent automatically; no extra config needed.
+
 ### `.clangd`
 
 Editor-side configuration. Points `clangd` at the CMake compilation database at `build/debug`. Ensures editor diagnostics match what CI sees.

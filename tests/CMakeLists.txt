@@ -12,10 +12,10 @@ include(doctest)
 
 add_executable(tests
   test_smoke.cpp
-  dungeon/grid/test_tile_coord.cpp
+  dummy/tile_coord.cpp
+  dummy/test_tile_coord.cpp
 )
 
-target_link_libraries(tests PRIVATE dungeon_core)
 target_link_libraries(tests PRIVATE doctest::doctest project_warnings)
 
 target_compile_features(tests PRIVATE cxx_std_17)
