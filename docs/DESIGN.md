@@ -464,28 +464,30 @@ Boss-controlled portals are *boss attacks*, not room modifiers. They are unaffec
 | Constraint | Value |
 | --- | --- |
 | Base resolution | 384×216 |
-| Character sprite size | 24×24 (or 24×32 for taller characters) |
-| Enemy sprite size | 24×24 |
-| Boss sprite size | 24×24 normal / 48×48 large / 72×72 if huge |
+| Character sprite size | **32×32** (aligns to 2×2 tiles on the 16×16 grid) |
+| Enemy sprite size | 32×32 |
+| Boss sprite size | 32×32 normal / 48×48 large / 72×72 if huge |
+| Tile size | **16×16** (smaller than characters for spacious layouts + combat readability) |
 | UI icons | 24×24 |
 | Item pickups | 24×24 |
 | Projectiles | 8×8 or 12×12 |
 | Effects / VFX | 24×24 or 48×48 |
-| Palette | **32 colors flat. No more, no less.** |
+| Palette | **Lospec Endesga 32** — 32 colors flat, no more no less |
 | Shading | 2–3 shades per color |
-| Tile size | TBD (see TODO) |
+| Art direction | Less-detailed / charming style (chosen for scope + asset production speed) |
+
+**Sprite-to-grid note**: 32×32 characters were chosen specifically so a character occupies exactly 2×2 tiles on the 16×16 grid. (Earlier the spec said 24×24; this was revised to fix grid misalignment — 24px characters span an awkward 1.5 tiles.)
 
 ### Animation Frame Budgets
 
 #### Player
 - Idle: 4 frames
-- Walk: 6 frames
+- Run: 6 frames (single run animation; no walk/run toggle, no stamina system in v1)
 - Attack (cutlass): 4–6 frames
 - Attack (flintlock): 4–6 frames
 - Parry: 2–4 frames
 - Hurt: 2 frames
 - Death: 6 frames
-- *(Run animation TBD — depends on whether walk/run distinction is a gameplay feature.)*
 
 #### Enemy
 - Idle: 2–4 frames
@@ -524,28 +526,42 @@ Boss-controlled portals are *boss attacks*, not room modifiers. They are unaffec
 - `.ase` files committed via Git LFS; PNGs exported at build time via Aseprite CLI from CMake.
 
 ### Folder Structure
+
+Lowercase naming convention globally.
+
 ```
 assets/
-├── aseprite/        # .ase source files (LFS)
-│   ├── player/
-│   ├── enemies/
-│   ├── environment/
-│   └── ui/
-└── (PNGs generated at build time into build/assets/sprites/)
+├── sprites/      # exported/working sprite assets
+├── audio/        # music + SFX
+├── ui/           # UI art
+├── shaders/      # shader files (if/when Tier 3 post-fx lands)
+└── aseprite/     # .ase source files (LFS-tracked)
 ```
 
-### TODOs (For DUN-10 Assignee)
+**Note**: `.ase` sources live in `assets/aseprite/` (LFS). Reconcile generated-PNG output location with TECH.md asset pipeline — see TODO.
 
-- [ ] **Tile size decision** — pick a tile size. Likely smaller than character sprites (16×16 if character is 24×24) so rooms feel spacious rather than cramped. Confirm with Design Lead.
-- [ ] **Concept 1 vs Concept 2 resolution** — design doc lists two unresolved art-style options ("more detailed/charming" vs "less detailed/charming"). Pick one before any real art ships.
-- [ ] **Run animation decision** — does the player run? If walk/run is a movement option, design the gameplay (stamina? hold-to-run?). If not, drop the run animation from budget.
-- [ ] **Tier 1 game feel commitments** — confirm screen shake, hit-stop, hurt flash, knockback are in scope from Day 1. These are programmer-visible features that don't appear in the art-focused design doc but must be acknowledged.
-- [ ] **Damage numbers** — Tier 2 game feel item. Yes or no for v1.
-- [ ] **UI mockups** — HUD (health, parry indicator, weapon icons, cooldown timers), pause menu, settings, main menu, hub. None of this is designed yet. UI consistently gets cut late and suffers.
-- [ ] **Player character design** — sprite reference, color, recognizable silhouette. No character design exists yet.
-- [ ] **Pirate-themed visual identity pass** on enemies 2, 3, 4 (Big Guy pair, flying poison thrower, shaman). Each enemy needs a corrupted-pirate visual that fits the island/crew theme — not generic fantasy.
-- [ ] **Palette commit** — lock the specific 32 colors. Recommend evaluating Lospec palettes (Endesga 32, Resurrect 64 trimmed to 32, Pear36 trimmed) as starting points. Once locked, every asset uses only these colors.
-- [ ] **Folder casing convention** — design doc uses `Assets/Sprites/`; TECH.md uses `assets/aseprite/`. Pick one (recommend lowercase) and apply globally.
+### Player Character Design
+
+- Pirate-themed visual identity: traditional pirate garb (Blackbeard-style), **red bandana for silhouette recognition**.
+- Distinct, readable silhouette is the priority.
+
+### Resolved (DUN-10)
+- ✅ Sprite size: 32×32 characters, 16×16 tiles (grid-aligned).
+- ✅ Art style: less-detailed / charming (scope-driven).
+- ✅ Run animation: single run, no walk/run toggle, no stamina.
+- ✅ Tier 1 game feel confirmed in scope from Day 1 (screen shake, hit-stop, hurt flash, knockback) — acknowledged by Art Lead and for programming.
+- ✅ Damage numbers: out of scope for v1.
+- ✅ Palette: Lospec Endesga 32.
+- ✅ Folder casing: lowercase globally.
+- ✅ Player character: pirate garb + red bandana.
+
+### Remaining TODOs
+- [ ] **UI mockups** — HUD (health, parry-ready indicator, weapon icons), pause menu, settings, main menu, hub. To be drafted for internal team review. Art & Audio Director.
+- [ ] **Pirate-themed visual identity pass** on enemies 2, 3, 4 (Big Guy pair, flying poison thrower, shaman) — redesign to fit corrupted-pirate/island-crew theme before final production. Art & Audio Director + Design Lead.
+- [ ] **Asset folder reconciliation** — DESIGN.md art folders (`assets/sprites/`, `assets/ui/`, `assets/shaders/`) vs. TECH.md pipeline (PNGs generated at build time into `build/assets/sprites/`). Decide whether `assets/sprites/` holds committed working art or is purely generated output. Art & Audio Director + Tech Lead.
+
+### Stretch Ideas (Not Committed)
+- 🧢 **Cosmetic rewards from boss battles** (hats, coats, wearables). Charming and on-theme, but requires a wardrobe/equip system + player sprite layering/swapping + per-cosmetic art. **Post-vertical-slice consideration only.** Not a v1 commitment.
 
 ---
 
@@ -620,16 +636,51 @@ ui_click_01.wav
 bgm_forest_loop.ogg
 ```
 
-### TODOs (For DUN-11 Assignee)
+### Audio Direction & Production Decisions (Resolved — DUN-11)
 
-- [ ] **Music source strategy** — confirm: royalty-free only, original composition, or hybrid. Audacity workflow in design doc suggests in-house processing, but doesn't clarify if music itself is original or sourced. Decide.
-- [ ] **SFX generation tool** — Audacity is an editor, not a generator. Pick a generator: sfxr / bfxr / jsfxr for retro chiptune SFX, or Freesound.org CC for sampled audio, or both. Document the tool chain.
-- [ ] **Music ownership** — assign one team member to spend 2–3 hours assembling a candidate playlist (15–20 tracks) of royalty-free options. Team picks 5–8 final.
-- [ ] **Track inventory** — the design doc targets 3–6 music tracks but the game has at minimum: main menu, hub, Level 1 ambient, Level 2 ambient, Level 3 ambient, miniboss combat, miniboss phase 2, final boss × 3 phases, victory, game over. That's 10+ scenes. Decide: reuse tracks across scenes, or expand the target?
-- [ ] **Parry sound design** — **HIGH PRIORITY.** Parry is core combat; the parry "ring" is one of the most important sounds in the entire game. Currently buried in the SFX inventory. Spec it explicitly: distinct ring on success, muted thud on miss, distinct "perfect" ring if perfect-parry tier is added later.
-- [ ] **Red-attack audio convention** — unparryable (red) attacks need a consistent audio signature across all enemies and bosses so players learn the cue. Spec this.
-- [ ] **Phase-transition stingers** — every boss phase transition needs an audio stinger. Spec the convention.
-- [ ] **Audio engine confirmation** — Raylib audio is sufficient for v1 (no ducking, sidechaining, or spatial audio). Confirm.
+#### Music Source Strategy
+- **Hybrid**: original compositions + royalty-free tracks.
+- In-house processing/editing in **Audacity**.
+
+#### SFX Pipeline
+- **Generation**: Bfxr (retro-styled generated SFX).
+- **Editing/layering**: Audacity (trimming, volume balancing, layering, export formatting, cleanup).
+- **Supplemental**: Freesound.org for environmental/sampled effects when generated sounds fall short.
+- **Flow**: Bfxr → Audacity → Export → `assets/audio/sfx/`.
+
+#### Music Ownership
+- Art & Audio Director assembles a 15–20 track candidate playlist for review; team selects ~5–8 final.
+
+#### Track Inventory & Reuse
+- Tracks reused across scenes to keep scope manageable. Shared between hub / level ambience / miniboss / menu where appropriate.
+- Boss phases use **layered variations or modified playback timing**, not entirely unique compositions.
+
+#### Parry Sound Design
+- **Successful parry**: sharp metallic ring, high-frequency emphasis, immediate readability.
+- **Failed / mistimed parry**: muted thud / dull impact, clearly communicates failure.
+- **Perfect parry**: distinct sting separate from the normal ring (per `specs/parry.md`).
+- Goals: recognizable in high combat intensity, reinforces timing precision, minimal overlap with weapon-hit SFX.
+- **Sync**: triggers on parry-confirmation frames alongside hit-stop, hurt flash, knockback, optional light screen shake. Timing must be immediate for responsiveness.
+
+#### Red-Attack Audio Convention
+- Shared warning signature across all enemies and bosses.
+- Sharp warning stinger **before release** (during attack startup, not impact), distinct tonal identity, corrupted/unnatural texture, harsh scrape, consistent timing window.
+- All unparryable attacks must trigger the shared cue. Bosses may layer additional sounds while preserving core recognizability.
+
+#### Phase-Transition Stingers
+- Every boss phase transition includes a dedicated stinger.
+- ~1–3 seconds, dramatic, contrasts normal combat audio, avoids excessive interruption.
+- Accompanied by temporary music ducking/pause + a brief gameplay-emphasis window.
+- Palette: cursed pirate horn, distorted bell/chime, low-frequency swell.
+- Syncs with cinematic pauses, animation locks, screen shake, boss transformation effects, arena changes.
+
+#### Audio Engine
+- **Raylib built-in audio confirmed sufficient for v1.**
+- Included: music/SFX playback, basic mixing, simultaneous playback, looping, volume control.
+- Out of scope: sidechaining, advanced ducking, spatial audio, adaptive music, external middleware.
+
+#### Volume Defaults (carried from earlier)
+- Music ~40%, SFX ~70% at first launch.
 
 ---
 
@@ -638,8 +689,8 @@ bgm_forest_loop.ogg
 ### Highest Priority
 - [ ] **Game name** — currently `<GameName>`. Lock by end of Week 2.
 - [ ] **Teaching plan room-by-room sketches** — Design Lead homework before next meeting.
-- [ ] **Parry sound design** — Art & Audio Director (ring, perfect-parry sting, whiff, sparks).
-- [ ] **Pirate-themed visual identity pass** on enemies and modifier set dressing — Art & Audio Director + Design Lead.
+- [ ] **Pirate-themed visual identity pass** on enemies 2-4 — Art & Audio Director + Design Lead (see Section 7).
+- [ ] **UI mockups** — HUD, pause, settings, main menu, hub — Art & Audio Director (see Section 7).
 
 ### Medium Priority
 - [ ] **Meeting cadence — specific recurring days/times.** Structure locked (2 standups + 1 playtest, 3–6pm, 1 buffer day); pick the actual days.
@@ -657,6 +708,8 @@ bgm_forest_loop.ogg
 - [x] **Portals scoping session (DUN-13)** — locked. See `portals_spec.md`.
 - [x] **Parry system spec** — locked. See `parry_spec.md` and Section 2.
 - [x] **C++ standard alignment** — C++20 locked across `TECH.md`, `.clang-format`, `.clang-tidy`.
+- [x] **Art direction (DUN-10)** — sprite/tile sizes, palette (Endesga 32), art style, run animation, player design, folder casing. See Section 7.
+- [x] **Audio direction (DUN-11)** — hybrid music, Bfxr→Audacity pipeline, parry/red/transition audio specs, Raylib engine confirmed. See Section 8.
 
 ---
 
