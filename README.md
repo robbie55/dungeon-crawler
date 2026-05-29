@@ -47,9 +47,71 @@ winget install --id Git.Git         # bundles Git for Windows + Git LFS
 After install:
 
 - Open the **x64 Native Tools Command Prompt for VS 2022** (or run `vcvarsall.bat x64` from any shell) before running CMake — that's how the MSVC toolchain ends up on `PATH`. If you're driving everything from VS Code, the **CMake Tools** extension picks the kit for you instead.
-- Confirm `clang-format --version`, `clang-tidy --version`, and `clangd --version` resolve. The LLVM installer adds `C:\Program Files\LLVM\bin` to `PATH` by default; restart your terminal if they don't show up.
+- Confirm `clang-format --version`, `clang-tidy --version`, and `clangd --version` resolve. The LLVM installer offers a "Add LLVM to the system PATH" checkbox that is **off by default** — if you skipped it, see [Putting tools on PATH](#putting-tools-on-path) below.
 
 Raylib needs no extra setup on Windows — CMake links the bundled OS libraries automatically.
+
+### Putting tools on PATH
+
+Installers don't always add their binaries to `PATH`. If a command "isn't recognized" / "command not found" even though you installed it, the tool is on disk but the shell can't find it. First confirm what's missing — every tool should print a version:
+
+```sh
+cmake --version
+ninja --version
+git --version
+clang-format --version   # from llvm
+clang-tidy --version     # from llvm
+clangd --version         # from llvm
+```
+
+Fix whichever ones fail.
+
+#### macOS (zsh)
+
+Homebrew puts `cmake`, `ninja`, and `git-lfs` on `PATH` automatically **as long as Homebrew itself is wired into your shell**. If even `cmake` isn't found, your shell never sourced `brew shellenv`:
+
+```sh
+# Apple Silicon installs to /opt/homebrew; Intel to /usr/local — this picks the right one.
+echo 'eval "$('"$(command -v brew || echo /opt/homebrew/bin/brew)"' shellenv)"' >> ~/.zshrc
+exec zsh   # reload the shell
+```
+
+`llvm` is the exception. Homebrew installs it **keg-only** — it deliberately does *not* symlink `clang-format`/`clang-tidy`/`clangd` onto `PATH`, to avoid shadowing Apple's toolchain. That's why it needs its own line (also shown in the macOS install block above):
+
+```sh
+echo 'export PATH="$(brew --prefix llvm)/bin:$PATH"' >> ~/.zshrc
+exec zsh
+```
+
+Order matters: prepend (`...:$PATH`) so the Homebrew LLVM tools win over any older system copies. `git` ships with the Xcode Command Line Tools, so it's normally already found.
+
+#### Windows
+
+Each installer has its own PATH behavior, and "comes with VS 2022" tools only resolve inside the Native Tools prompt:
+
+| Tool | Default installer location | On PATH automatically? |
+| --- | --- | --- |
+| Git | `C:\Program Files\Git\cmd` | Yes — the installer's default option adds it |
+| LLVM | `C:\Program Files\LLVM\bin` | **No** — the PATH checkbox is off by default |
+| CMake | `C:\Program Files\CMake\bin` | Only if you chose "Add CMake to the system PATH"; the VS-bundled copy is on PATH only inside the Native Tools prompt |
+| Ninja | wherever you unzipped it (single `.exe`) | **No** — standalone Ninja has no installer; the VS-bundled copy is on PATH only inside the Native Tools prompt |
+
+**Permanent fix (recommended) — System Settings GUI:**
+
+1. Press Win, search **"Edit the system environment variables"**, open it.
+2. Click **Environment Variables…**
+3. Under **User variables**, select **Path** → **Edit** → **New**, and add the bin directory for each missing tool (e.g. `C:\Program Files\LLVM\bin`).
+4. **OK** out of all dialogs, then **open a new terminal** — existing terminals keep the old `PATH`.
+
+**Current-session-only fix (PowerShell)** — handy to test before committing to the change:
+
+```powershell
+$env:Path += ";C:\Program Files\LLVM\bin"
+```
+
+Avoid `setx PATH ...` from the command line: it truncates long values at 1024 chars and can clobber your existing `PATH`. Use the GUI for permanent changes.
+
+After editing `PATH`, re-run the version checks above in a **fresh** terminal.
 
 ---
 
