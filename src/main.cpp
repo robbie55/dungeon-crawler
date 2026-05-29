@@ -16,13 +16,17 @@ int main() {
 
   const RenderTexture2D kTarget{LoadRenderTexture(kGameWidth, kGameHeight)};
 
-  const Rectangle kSourceRec{0.0F, 0.0F, static_cast<float>(kTarget.texture.width),
-                             static_cast<float>(-kTarget.texture.height)};
+  const Rectangle kSourceRec{.x = 0.0F,
+                             .y = 0.0F,
+                             .width = static_cast<float>(kTarget.texture.width),
+                             .height = static_cast<float>(-kTarget.texture.height)};
 
   // TODO: scales up fine for 16:9, need to make a decision on how we want it to behave for
   // ultrawide 16:10 either will create a distorted look, or will need to be accounted for
-  Rectangle dest_rec{0.0F, 0.0F, static_cast<float>(screen_width),
-                     static_cast<float>(screen_height)};
+  Rectangle dest_rec{.x = 0.0F,
+                     .y = 0.0F,
+                     .width = static_cast<float>(screen_width),
+                     .height = static_cast<float>(screen_height)};
 
   SetTargetFPS(60);
 
