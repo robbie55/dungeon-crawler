@@ -14,10 +14,10 @@ int main() {
   InitWindow(screen_width, screen_height, "raylib - basic window");
   ToggleBorderlessWindowed();
 
-  RenderTexture2D target{LoadRenderTexture(kGameWidth, kGameHeight)};
+  const RenderTexture2D kTarget{LoadRenderTexture(kGameWidth, kGameHeight)};
 
-  Rectangle source_rec{0.0F, 0.0F, static_cast<float>(target.texture.width),
-                       static_cast<float>(-target.texture.height)};
+  const Rectangle kSourceRec{0.0F, 0.0F, static_cast<float>(kTarget.texture.width),
+                             static_cast<float>(-kTarget.texture.height)};
 
   // TODO: scales up fine for 16:9, need to make a decision on how we want it to behave for
   // ultrawide 16:10 either will create a distorted look, or will need to be accounted for
@@ -35,7 +35,7 @@ int main() {
     }
 
     // render game into virtual texture
-    BeginTextureMode(target);
+    BeginTextureMode(kTarget);
     {
       ClearBackground(RAYWHITE);
       DrawText("Scaled game!", 10, 10, 20, DARKGRAY);
@@ -47,12 +47,12 @@ int main() {
     BeginDrawing();
     {
       ClearBackground(BLACK);
-      DrawTexturePro(target.texture, source_rec, dest_rec, {0.0F, 0.0F}, 0.0F, WHITE);
+      DrawTexturePro(kTarget.texture, kSourceRec, dest_rec, {0.0F, 0.0F}, 0.0F, WHITE);
     }
     EndDrawing();
   }
 
-  UnloadRenderTexture(target);
+  UnloadRenderTexture(kTarget);
   CloseWindow();
 
   return 0;
