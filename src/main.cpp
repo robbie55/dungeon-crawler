@@ -1,5 +1,27 @@
 #include <raylib.h>
 
+namespace {
+  void RenderFrame(const RenderTexture2D target, const Rectangle source_rec,
+                   const Rectangle dest_rec) {
+    // render game into virtual texture
+    BeginTextureMode(target);
+    {
+      ClearBackground(RAYWHITE);
+      DrawText("Scaled game!", 10, 10, 20, DARKGRAY);
+
+      // draw game obj's here
+    }
+    EndTextureMode();
+
+    BeginDrawing();
+    {
+      ClearBackground(BLACK);
+      DrawTexturePro(target.texture, source_rec, dest_rec, {0.0F, 0.0F}, 0.0F, WHITE);
+    }
+    EndDrawing();
+  }
+}  // namespace
+
 int main() {
   // virtual res values
   constexpr int kGameWidth{384};
@@ -38,22 +60,7 @@ int main() {
       dest_rec.height = static_cast<float>(screen_height);
     }
 
-    // render game into virtual texture
-    BeginTextureMode(kTarget);
-    {
-      ClearBackground(RAYWHITE);
-      DrawText("Scaled game!", 10, 10, 20, DARKGRAY);
-
-      // draw game obj's here
-    }
-    EndTextureMode();
-
-    BeginDrawing();
-    {
-      ClearBackground(BLACK);
-      DrawTexturePro(kTarget.texture, kSourceRec, dest_rec, {0.0F, 0.0F}, 0.0F, WHITE);
-    }
-    EndDrawing();
+    RenderFrame(kTarget, kSourceRec, dest_rec);
   }
 
   UnloadRenderTexture(kTarget);
