@@ -1,5 +1,7 @@
 #include <raylib.h>
 
+#include "core/state_fsm.hpp"
+
 namespace {
   void RenderFrame(const RenderTexture2D target, const Rectangle source_rec,
                    const Rectangle dest_rec) {
