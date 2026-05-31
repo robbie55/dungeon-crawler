@@ -265,12 +265,12 @@ For each level, modifier rooms break into four categories:
 - **Cast duration**: 3–5 seconds, telegraphed.
 - **Cancellation**: only by killing the shaman.
 
-### Stat Sheet, Composition Rules, Interaction Matrix
+### Stat Sheet, Composition Rules, Interaction Matrix (Locked — see `docs/specs/`)
 
-Detailed work in sub-tickets:
-- Stat tiers: DUN-15
-- Encounter composition: DUN-16
-- Modifier interaction matrix: DUN-17
+Locked specs (see `docs/specs/`):
+- Stat tiers: DUN-15 — `enemy_stats_spec.md`
+- Encounter composition: DUN-16 — `encounter_composition_spec.md`
+- Modifier interaction matrix: DUN-17 — `interaction_matrix_spec.md`
 
 ---
 
