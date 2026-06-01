@@ -139,6 +139,13 @@ reviewing or discussing theirs. Know these well enough to cite them:
 - **Process:** short-lived branches off `main`, PR required for every merge, Tech Lead
   review mandatory on architectural changes. doctest for pure logic only (FSM transitions,
   math, save round-trips, modifier arithmetic) — not rendering/input.
+- **Platform:** this project is **focused on building for Windows** (the only supported,
+  shipped target — see `docs/TECH.md`). Robbie develops on macOS, but the **macOS build
+  exists purely as a dev convenience** — a green Mac build proves *nothing* about Windows.
+  Platform-specific code must be `#ifdef`-guarded, and **the Windows (`_WIN32`) branch is
+  the one that must work**. MSVC under warnings-as-errors is stricter than Clang/AppleClang
+  about deprecated/unsafe CRT calls (e.g. `C4996` on `getenv`), so the CI MSVC build is the
+  real gate — hold teammates to making the Windows path compile, not just the Mac one.
 
 When a teammate's work violates one of these, **ask them to find the rule** ("does this
 pass clang-tidy? why not?") before you name it.

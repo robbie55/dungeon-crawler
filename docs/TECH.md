@@ -335,6 +335,14 @@ In-house, minimal. No third-party dependency.
 - Output to stdout + a rotating file in `%APPDATA%\Local\<GameName>\logs\`.
 - One-line format: `[timestamp] [level] [file:line] message`.
 - Keep it boring — no fancy structured logging, no async log threads. Grow it if we need to.
+- **Cross-platform note:** Windows is the only shipped target, but the logger's
+  platform-specific code (log-dir resolution, `localtime`) is `#ifdef`-guarded so it also
+  builds on dev macOS/Linux machines. **The `_WIN32` branch only ever compiles in MSVC CI —
+  a green Mac build proves nothing about it.** MSVC under warnings-as-errors rejects
+  deprecated/unsafe CRT calls Clang waves through: the `getenv("LOCALAPPDATA")` lookup trips
+  `C4996` and is suppressed with a scoped `#pragma warning(push/disable:4996/pop)` around
+  that one call (never build-wide). Any new env-var read on the Windows path will hit the
+  same wall — use the same surgical suppression, and let MSVC CI be the gate.
 
 ---
 

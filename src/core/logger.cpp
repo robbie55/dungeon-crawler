@@ -77,7 +77,14 @@ namespace core::log {
     // branches keep the logger usable on dev machines. Falls back to ./logs.
     fs::path ResolveLogDir(const std::string& app_name) {
 #ifdef _WIN32
+// MSVC raises C4996 ("getenv may be unsafe") and the build treats warnings as errors. The
+// returned pointer is read once at init under the logger lock, never stored or written, so
+// the unsafety doesn't apply here. Suppress for this single call rather than disabling C4996
+// build-wide, which would mask genuinely unsafe CRT calls elsewhere.
+#pragma warning(push)
+#pragma warning(disable : 4996)
       const char* base = std::getenv("LOCALAPPDATA");  // NOLINT(concurrency-mt-unsafe) -- init-time
+#pragma warning(pop)
       if (base != nullptr) {
         return fs::path(base) / app_name / "logs";
       }
