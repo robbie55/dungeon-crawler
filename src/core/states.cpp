@@ -49,7 +49,7 @@ std::optional<StateRequest> Pause::Tick() {
   return std::nullopt;
   // }
 
-  StateRequest req{.type = RequestType::kReplace, .payload = std::make_unique<Hub>()};
+  StateRequest req{.type = RequestType::kPop, .payload = nullptr};
 
   return req;
 }

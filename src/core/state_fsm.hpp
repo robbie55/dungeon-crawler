@@ -17,8 +17,8 @@ class StateFSM {
   void operator=(StateFSM&& other) = delete;
   ~StateFSM() = default;
 
-  void RenderTop();
-  void ChainRender();
+  void TickTop();
+  void Render();
 
   void Push(std::unique_ptr<states::State> state_ptr);
   void Pop();
