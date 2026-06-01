@@ -1,16 +1,14 @@
 #include "states.hpp"
 
-using namespace states;
+std::optional<states::StateRequest> states::MainMenu::Tick() { return std::nullopt; }
 
-std::optional<StateRequest> MainMenu::Tick() { return std::nullopt; }
+std::optional<states::StateRequest> states::Hub::Tick() { return std::nullopt; }
 
-std::optional<StateRequest> Hub::Tick() { return std::nullopt; }
+std::optional<states::StateRequest> states::Level::Tick() { return std::nullopt; }
 
-std::optional<StateRequest> Level::Tick() { return std::nullopt; }
+std::optional<states::StateRequest> states::GameOver::Tick() { return std::nullopt; }
 
-std::optional<StateRequest> GameOver::Tick() { return std::nullopt; }
-
-std::optional<StateRequest> Victory::Tick() {
+std::optional<states::StateRequest> states::Victory::Tick() {
   frame_count++;
   if (frame_count <= kVictoryFrames) {
     return std::nullopt;
@@ -21,4 +19,4 @@ std::optional<StateRequest> Victory::Tick() {
   return req;
 }
 
-std::optional<StateRequest> Pause::Tick() { return std::nullopt; }
+std::optional<states::StateRequest> states::Pause::Tick() { return std::nullopt; }

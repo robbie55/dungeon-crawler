@@ -28,7 +28,7 @@ namespace core {
 
   void StateFSM::Tick() {
     assert(std::size(_stack) > 0 &&
-           "[[static_assert]] StateFSM::TickTop() -> stack is attempting to Tick with no "
+           "StateFSM::Tick() -> stack is attempting to Tick with no "
            "items in stack");
 
     std::optional<states::StateRequest> state_req{_stack.back()->Tick()};
@@ -39,17 +39,17 @@ namespace core {
 
     switch (state_req->type) {
       case states::RequestType::kPush: {
-        assert(state_req->payload && "StateFSM::TickTop() -> kPush operation missing payload");
+        assert(state_req->payload && "StateFSM::Tick() -> kPush operation missing payload");
         this->Push(std::move(state_req->payload));
         break;
       }
       case states::RequestType::kPop: {
-        assert(!state_req->payload && "StateFSM::TickTop() -> kPop operation contains payload");
+        assert(!state_req->payload && "StateFSM::Tick() -> kPop operation contains payload");
         this->Pop();
         break;
       }
       case states::RequestType::kReplace: {
-        assert(state_req->payload && "StateFSM::TickTop() -> kReplace operation missing payload");
+        assert(state_req->payload && "StateFSM::Tick() -> kReplace operation missing payload");
         this->Replace(std::move(state_req->payload));
         break;
       }

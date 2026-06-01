@@ -231,7 +231,7 @@ Strict, opinionated, educational. The philosophy: a learning project benefits mo
 | Types (class, struct, enum, alias) | `CamelCase` | `PlayerState` |
 | Functions, methods | `CamelCase` | `TryParry()` |
 | Variables, parameters | `lower_case` | `parry_window_frames` |
-| Member variables (private/protected) | `lower_case_` (trailing underscore) | `health_` |
+| Member variables (private/protected) | `_lower_case` (leading underscore) | `_health` |
 | Constants, constexpr | `kCamelCase` | `kParryWindowFrames` |
 | Enum constants | `kCamelCase` | `AttackType::kUnparryable` |
 | Namespaces | `lower_case` | `core::input` |

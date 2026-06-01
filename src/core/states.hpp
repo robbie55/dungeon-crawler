@@ -6,7 +6,7 @@
 #include <optional>
 
 namespace states {
-  constexpr const size_t kVictoryFrames{15};
+  constexpr std::size_t kVictoryFrames{15};
 
   struct StateRequest;
 
@@ -55,13 +55,13 @@ namespace states {
   };
   struct Pause : State {
     void Render() override {}
-    [[nodiscard]] bool DoesRenderBelow() const override { return true; };
+    [[nodiscard]] bool DoesRenderBelow() const override { return true; }
     std::optional<StateRequest> Tick() override;
   };
   struct GameOver : State {
     // TBD: GameOver is an overlay of the current level, with fade in/gradient
     void Render() override {}
-    [[nodiscard]] bool DoesRenderBelow() const override { return true; };
+    [[nodiscard]] bool DoesRenderBelow() const override { return true; }
     std::optional<StateRequest> Tick() override;
   };
   struct Victory : State {

@@ -15,7 +15,7 @@ namespace core {
     StateFSM(const StateFSM& other) = delete;
     StateFSM(StateFSM&& other) = delete;
     StateFSM& operator=(const StateFSM& other) = delete;
-    void operator=(StateFSM&& other) = delete;
+    StateFSM& operator=(StateFSM&& other) = delete;
     ~StateFSM() = default;
 
     void Tick();
