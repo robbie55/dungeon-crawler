@@ -24,7 +24,7 @@ namespace states {
 
     virtual std::optional<StateRequest> Tick() = 0;
     virtual void Render() = 0;
-    [[nodiscard]] virtual bool DoesRenderBelow() const { return false; };
+    [[nodiscard]] virtual bool DoesRenderBelow() const { return false; }
   };
 
   enum class RequestType : std::uint8_t {
@@ -49,7 +49,7 @@ namespace states {
     std::optional<StateRequest> Tick() override;
   };
   struct Level : State {
-    // TODO: Player, enemy, projectile count, this truct WILL grow
+    // TODO: Player, enemy, projectile count, this struct WILL grow
     void Render() override {}
     std::optional<StateRequest> Tick() override;
   };
@@ -59,7 +59,7 @@ namespace states {
     std::optional<StateRequest> Tick() override;
   };
   struct GameOver : State {
-    // TBD: GameOver is an overlay of the curernt level, with fade in/gradient
+    // TBD: GameOver is an overlay of the current level, with fade in/gradient
     void Render() override {}
     [[nodiscard]] bool DoesRenderBelow() const override { return true; };
     std::optional<StateRequest> Tick() override;

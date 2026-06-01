@@ -5,21 +5,26 @@
 
 #include "states.hpp"
 
-class StateFSM {
- private:
-  std::vector<std::unique_ptr<states::State>> _stack;
+namespace core {
+  class StateFSM {
+   private:
+    std::vector<std::unique_ptr<states::State>> _stack;
 
- public:
-  StateFSM() { _stack.emplace_back(std::make_unique<states::MainMenu>()); };
-  StateFSM(const StateFSM& other) = delete;
-  StateFSM(StateFSM&& other) = delete;
-  StateFSM& operator=(const StateFSM& other) = delete;
-  void operator=(StateFSM&& other) = delete;
-  ~StateFSM() = default;
+   public:
+    StateFSM() { _stack.emplace_back(std::make_unique<states::MainMenu>()); }
+    StateFSM(const StateFSM& other) = delete;
+    StateFSM(StateFSM&& other) = delete;
+    StateFSM& operator=(const StateFSM& other) = delete;
+    void operator=(StateFSM&& other) = delete;
+    ~StateFSM() = default;
 
-  void Tick();
-  void Render();
+    void Tick();
+    void Render();
 
-  void Push(std::unique_ptr<states::State> state_ptr);
-  void Pop();
-};
+    [[nodiscard]] bool Empty() const { return _stack.empty(); }
+
+    void Push(std::unique_ptr<states::State> state_ptr);
+    void Pop();
+    void Replace(std::unique_ptr<states::State> state_ptr);
+  };
+}  // namespace core
