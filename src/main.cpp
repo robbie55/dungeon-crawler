@@ -1,5 +1,6 @@
 #include <raylib.h>
 
+#include "core/logger.hpp"
 #include "core/state_fsm.hpp"
 
 namespace {
@@ -18,13 +19,16 @@ namespace {
     BeginDrawing();
     {
       ClearBackground(BLACK);
-      DrawTexturePro(target.texture, source_rec, dest_rec, {0.0F, 0.0F}, 0.0F, WHITE);
+      DrawTexturePro(target.texture, source_rec, dest_rec, {.x = 0.0F, .y = 0.0F}, 0.0F, WHITE);
     }
     EndDrawing();
   }
 }  // namespace
 
 int main() {
+  core::log::Init();
+  LOG_INFO("dungeon-crawler starting up");
+
   // virtual res values
   constexpr int kGameWidth{384};
   constexpr int kGameHeight{216};
@@ -67,6 +71,9 @@ int main() {
 
   UnloadRenderTexture(kTarget);
   CloseWindow();
+
+  LOG_INFO("dungeon-crawler shutting down");
+  core::log::Shutdown();
 
   return 0;
 }

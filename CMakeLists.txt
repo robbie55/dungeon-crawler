@@ -38,7 +38,10 @@ enable_testing()
 
 add_subdirectory(tests)
 
-add_executable(dungeon-crawler src/main.cpp)
+add_executable(dungeon-crawler
+  src/main.cpp
+  src/core/logger.cpp
+)
 target_link_libraries(dungeon-crawler PRIVATE raylib nlohmann_json::nlohmann_json project_warnings)
 
 # Hide the console window on Windows Release builds; keep it in Debug so
