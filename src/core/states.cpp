@@ -34,7 +34,7 @@ std::optional<StateRequest> GameOver::Tick() {
 
 std::optional<StateRequest> Victory::Tick() {
   frame_count++;
-  if (frame_count <= 15) {
+  if (frame_count <= kVictoryFrames) {
     return std::nullopt;
   }
 

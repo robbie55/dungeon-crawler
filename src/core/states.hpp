@@ -6,6 +6,8 @@
 #include <optional>
 
 namespace states {
+  constexpr const size_t kVictoryFrames{15};
+
   struct StateRequest;
 
   // state abstract class, used to derive game states
@@ -39,32 +41,32 @@ namespace states {
   };
 
   struct MainMenu : State {
-    void Render() override {};
+    void Render() override {}
     std::optional<StateRequest> Tick() override;
   };
   struct Hub : State {
-    void Render() override {};
+    void Render() override {}
     std::optional<StateRequest> Tick() override;
   };
   struct Level : State {
     // TODO: Player, enemy, projectile count, this truct WILL grow
-    void Render() override {};
+    void Render() override {}
     std::optional<StateRequest> Tick() override;
   };
   struct Pause : State {
-    void Render() override {};
+    void Render() override {}
     [[nodiscard]] bool DoesRenderBelow() const override { return true; };
     std::optional<StateRequest> Tick() override;
   };
   struct GameOver : State {
     // TBD: GameOver is an overlay of the curernt level, with fade in/gradient
-    void Render() override {};
+    void Render() override {}
     [[nodiscard]] bool DoesRenderBelow() const override { return true; };
     std::optional<StateRequest> Tick() override;
   };
   struct Victory : State {
     std::size_t frame_count{};
-    void Render() override {};
+    void Render() override {}
     std::optional<StateRequest> Tick() override;
   };
 

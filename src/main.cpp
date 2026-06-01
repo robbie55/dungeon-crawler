@@ -58,6 +58,8 @@ int main() {
 
   SetTargetFPS(60);
 
+  StateFSM state_fsm{};
+
   while (!WindowShouldClose()) {
     if (IsWindowResized()) {
       screen_width = GetScreenWidth();
@@ -65,6 +67,8 @@ int main() {
       dest_rec.width = static_cast<float>(screen_width);
       dest_rec.height = static_cast<float>(screen_height);
     }
+
+    state_fsm.Tick();
 
     RenderFrame(kTarget, kSourceRec, dest_rec);
   }

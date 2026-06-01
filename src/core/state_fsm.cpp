@@ -10,10 +10,14 @@ void StateFSM::Push(std::unique_ptr<states::State> state_ptr) {
   _stack.emplace_back(std::move(state_ptr));
 }
 
-void StateFSM::Pop() { _stack.pop_back(); };
+void StateFSM::Pop() { _stack.pop_back(); }
 
-void StateFSM::TickTop() {
-  std::optional<states::StateRequest> state_req{_stack[_stack.size() - 1]->Tick()};
+void StateFSM::Tick() {
+  assert(std::size(_stack) > 0 &&
+         "[[static_assert]] StateFSM::TickTop() -> stack is attempting to Tick with no "
+         "items in stack");
+
+  std::optional<states::StateRequest> state_req{_stack.back()->Tick()};
 
   if (!state_req) {
     return;
@@ -44,7 +48,7 @@ void StateFSM::TickTop() {
 
 void StateFSM::Render() {
   std::size_t render_at{};
-  for (int i{static_cast<int>(_stack.size()) - 1}; i >= 0; --i) {
+  for (std::size_t i{_stack.size() - 1}; i < _stack.size(); --i) {
     render_at = i;
     if (!_stack[i]->DoesRenderBelow()) {
       break;
