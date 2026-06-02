@@ -81,10 +81,18 @@ namespace core::log {
 // returned pointer is read once at init under the logger lock, never stored or written, so
 // the unsafety doesn't apply here. Suppress for this single call rather than disabling C4996
 // build-wide, which would mask genuinely unsafe CRT calls elsewhere.
+//
+// Guarded on _MSC_VER, not _WIN32: the pragma and C4996 are MSVC constructs. Other
+// Windows-targeting compilers (MinGW gcc, plain clang) define _WIN32 too, but don't emit
+// C4996 and treat `#pragma warning` as an unknown pragma -> -Werror build break.
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
+#endif
       const char* base = std::getenv("LOCALAPPDATA");  // NOLINT(concurrency-mt-unsafe) -- init-time
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
       if (base != nullptr) {
         return fs::path(base) / app_name / "logs";
       }
