@@ -34,12 +34,19 @@ target_compile_options(project_warnings INTERFACE
   $<$<CXX_COMPILER_ID:MSVC>:/W4;/permissive-;/WX>
 )
 
+# Build the core library before the targets that link it.
+add_subdirectory(src/core)
+
 enable_testing()
 
 add_subdirectory(tests)
 
-add_executable(dungeon-crawler src/main.cpp)
-target_link_libraries(dungeon-crawler PRIVATE raylib nlohmann_json::nlohmann_json project_warnings)
+add_executable(dungeon-crawler
+  src/main.cpp
+)
+# raylib: main.cpp includes <raylib.h> directly. nlohmann_json is unused by main today
+# (kept from the original wiring; drop it if it's still unused when you next touch this).
+target_link_libraries(dungeon-crawler PRIVATE game_core raylib nlohmann_json::nlohmann_json project_warnings)
 
 # Hide the console window on Windows Release builds; keep it in Debug so
 # stdout/stderr stay visible while iterating.

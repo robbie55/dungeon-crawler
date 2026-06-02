@@ -1,28 +1,34 @@
 #include <raylib.h>
 
+#include "core/logger.hpp"
+#include "core/state_fsm.hpp"
+
 namespace {
   void RenderFrame(const RenderTexture2D target, const Rectangle source_rec,
-                   const Rectangle dest_rec) {
+                   const Rectangle dest_rec, core::StateFSM& state_fsm) {
     // render game into virtual texture
     BeginTextureMode(target);
     {
       ClearBackground(RAYWHITE);
-      DrawText("Scaled game!", 10, 10, 20, DARKGRAY);
 
       // draw game obj's here
+      state_fsm.Render();
     }
     EndTextureMode();
 
     BeginDrawing();
     {
       ClearBackground(BLACK);
-      DrawTexturePro(target.texture, source_rec, dest_rec, {0.0F, 0.0F}, 0.0F, WHITE);
+      DrawTexturePro(target.texture, source_rec, dest_rec, {.x = 0.0F, .y = 0.0F}, 0.0F, WHITE);
     }
     EndDrawing();
   }
 }  // namespace
 
 int main() {
+  core::log::Init();
+  LOG_INFO("dungeon-crawler starting up");
+
   // virtual res values
   constexpr int kGameWidth{384};
   constexpr int kGameHeight{216};
@@ -52,7 +58,9 @@ int main() {
 
   SetTargetFPS(60);
 
-  while (!WindowShouldClose()) {
+  core::StateFSM state_fsm{};
+
+  while (!WindowShouldClose() && !state_fsm.Empty()) {
     if (IsWindowResized()) {
       screen_width = GetScreenWidth();
       screen_height = GetScreenHeight();
@@ -60,11 +68,16 @@ int main() {
       dest_rec.height = static_cast<float>(screen_height);
     }
 
-    RenderFrame(kTarget, kSourceRec, dest_rec);
+    state_fsm.Tick();
+
+    RenderFrame(kTarget, kSourceRec, dest_rec, state_fsm);
   }
 
   UnloadRenderTexture(kTarget);
   CloseWindow();
+
+  LOG_INFO("dungeon-crawler shutting down");
+  core::log::Shutdown();
 
   return 0;
 }

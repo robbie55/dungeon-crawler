@@ -46,9 +46,12 @@ States to start with:
 - `Victory`
 
 Rules:
-- Only the top state ticks and renders by default. If a state wants the state beneath it to render (e.g., `Pause` showing the frozen level behind a dim overlay), it explicitly asks for it.
+- **Tick is top-only — invariant, not a per-state flag.** Only the top of the stack ticks; states never tick the state beneath them. This holds for every state we have, so it lives in the tick loop, not as a `tick_below` member. (Revisit only if a non-blocking scene overlay — e.g. a toast/notification that lets the action keep running underneath — is ever added. HUD doesn't count; that's part of `Level`'s own render, see DUN-31.)
+- **Render can bleed downward — per-state, on request.** Rendering is the *only* axis that descends the stack. A state opts the one(s) beneath it back into the render pass (e.g. `Pause` showing the frozen level behind a dim overlay); the default is top-only. Resolve which layers draw by walking down from the top, then **paint bottom-up** so the top state lands last.
+- **Container: a stack backed by `std::vector`, not `std::stack`.** The render pass needs to iterate the stack, which the `std::stack` adaptor hides. A `std::deque` is also wrong — the collection only ever mutates at one end (push/pop the top), so its double-ended insert buys nothing and misleads readers into expecting front mutation.
 - States own their resources. On pop, the state's destructor releases everything it allocated.
-- Transitions go through the state machine — no direct state-to-state pointers.
+- **Transitions route through the FSM — states never mutate the stack directly.** The ticking top state expresses intent by *returning* a transition request from its tick (an optional carrying the verb — push / pop / replace — plus, for push/replace, the `unique_ptr<State>` it constructed). The FSM applies that request. States hold no pointers to one another and never call `push`/`pop` on the stack they're being ticked from — doing so mutates the container mid-iteration and can destroy the very state whose tick is running. `replace` is for states that shouldn't persist underneath (e.g. `MainMenu` → `Level`, level restart); `push` is for overlays that need the layer beneath them (`Pause`, `GameOver` — both render below).
+- **Transitions apply same-frame: tick → apply → render.** The FSM applies the returned request the instant it has it, before the render pass, so the frame reflects the post-transition stack and no pending transition is carried across the frame boundary. The deferred alternative (render the old stack, apply next frame) buys nothing here: scene transitions aren't frame-precision-sensitive — that concern lives in the separate player combat FSM — so the deciding factors are responsiveness and keeping zero transition state between frames.
 
 ### Player State Machine (Locked from `specs/parry.md`)
 
@@ -228,7 +231,7 @@ Strict, opinionated, educational. The philosophy: a learning project benefits mo
 | Types (class, struct, enum, alias) | `CamelCase` | `PlayerState` |
 | Functions, methods | `CamelCase` | `TryParry()` |
 | Variables, parameters | `lower_case` | `parry_window_frames` |
-| Member variables (private/protected) | `lower_case_` (trailing underscore) | `health_` |
+| Member variables (private/protected) | `_lower_case` (leading underscore) | `_health` |
 | Constants, constexpr | `kCamelCase` | `kParryWindowFrames` |
 | Enum constants | `kCamelCase` | `AttackType::kUnparryable` |
 | Namespaces | `lower_case` | `core::input` |
@@ -332,6 +335,14 @@ In-house, minimal. No third-party dependency.
 - Output to stdout + a rotating file in `%APPDATA%\Local\<GameName>\logs\`.
 - One-line format: `[timestamp] [level] [file:line] message`.
 - Keep it boring — no fancy structured logging, no async log threads. Grow it if we need to.
+- **Cross-platform note:** Windows is the only shipped target, but the logger's
+  platform-specific code (log-dir resolution, `localtime`) is `#ifdef`-guarded so it also
+  builds on dev macOS/Linux machines. **The `_WIN32` branch only ever compiles in MSVC CI —
+  a green Mac build proves nothing about it.** MSVC under warnings-as-errors rejects
+  deprecated/unsafe CRT calls Clang waves through: the `getenv("LOCALAPPDATA")` lookup trips
+  `C4996` and is suppressed with a scoped `#pragma warning(push/disable:4996/pop)` around
+  that one call (never build-wide). Any new env-var read on the Windows path will hit the
+  same wall — use the same surgical suppression, and let MSVC CI be the gate.
 
 ---
 

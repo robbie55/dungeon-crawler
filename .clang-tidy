@@ -139,7 +139,7 @@ FormatStyle: file
 #       * Functions / methods:              CamelCase  (Google convention; flip to camelBack
 #                                                       if you'd rather)
 #       * Variables / parameters:           lower_case
-#       * Private member variables:         lower_case_   (trailing underscore)
+#       * Private member variables:         _lower_case   (leading underscore)
 #       * Constants and constexpr:          kCamelCase
 #       * Enum constants:                   kCamelCase
 #       * Namespaces:                       lower_case
