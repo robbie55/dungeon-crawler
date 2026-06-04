@@ -53,7 +53,6 @@ These four colors are reserved. Do not use them on non-signal geometry.
 - Colors outside Endesga 32
 - 4 or more shades on a single tile
 - Red telegraphs on non-danger sprites
-- White highlights anywhere except parry sparks
 - Warm player palette on enemy sprites
 - Pickup gold used for decoration
 - Sub-pixel anti-aliasing

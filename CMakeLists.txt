@@ -60,3 +60,47 @@ if(WIN32)
     $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/ENTRY:mainCRTStartup>
   )
 endif()
+
+# ── Art asset pipeline (.ase → .png) ────────────────────────────────────────
+# Source .ase files live in source tree (tracked via LFS).
+# Generated .png files land in the build tree and are never committed.
+
+if(NOT DEFINED ASEPRITE_EXE OR ASEPRITE_EXE STREQUAL "")
+    find_program(ASEPRITE_EXE NAMES aseprite aseprite.exe)
+endif()
+
+if(NOT ASEPRITE_EXE)
+    message(WARNING
+        "[DUN-35] Aseprite not found — 'art' target will not be available. "
+        "Set -DASEPRITE_EXE=<path> on the cmake command line."
+    )
+else()
+    message(STATUS "[DUN-35] Aseprite found: ${ASEPRITE_EXE}")
+
+    set(ART_OUTPUT_DIR "${CMAKE_BINARY_DIR}/generated/art")
+    file(MAKE_DIRECTORY "${ART_OUTPUT_DIR}")
+
+    set(ASE_SOURCES
+        "${CMAKE_SOURCE_DIR}/assets/aseprite/placeholder.ase"
+    )
+
+    foreach(ASE_FILE IN LISTS ASE_SOURCES)
+        get_filename_component(ASE_NAME "${ASE_FILE}" NAME_WE)
+        set(PNG_OUT "${ART_OUTPUT_DIR}/${ASE_NAME}.png")
+
+        add_custom_command(
+            OUTPUT  "${PNG_OUT}"
+            COMMAND "${ASEPRITE_EXE}"
+                    --batch "${ASE_FILE}"
+                    --save-as "${PNG_OUT}"
+            DEPENDS "${ASE_FILE}"
+            COMMENT "Exporting ${ASE_NAME}.ase → ${PNG_OUT}"
+            VERBATIM
+        )
+
+        list(APPEND ALL_ART_PNGS "${PNG_OUT}")
+    endforeach()
+
+    add_custom_target(art ALL DEPENDS ${ALL_ART_PNGS})
+endif()
+# ── End art pipeline ─────────────────────────────────────────────────────────
